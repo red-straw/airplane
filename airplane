@@ -1,0 +1,155 @@
+let c = -1500;
+let cols, rows;
+let scl = 20;
+let w = 1400;
+let h = 1000;
+let flying = 0;
+let terrain = [];
+
+function setup() {
+  createCanvas(800,700, WEBGL);
+  
+  cols = w / scl;
+  rows = h / scl;
+
+  for (let x = 0; x < cols; x++) {
+    terrain[x] = [];
+    for (let y = 0; y < rows; y++) {
+      terrain[x][y] = 0; //specify a default value for now
+    }
+  }
+  noStroke();
+}
+
+function draw() {
+
+  flying -= 0.1;
+  let yoff = flying;
+  for (let y = 0; y < rows; y++) {
+    var xoff = 0;
+    for (let x = 0; x < cols; x++) {
+      terrain[x][y] = map(noise(xoff, yoff), 0, 1, -100, 100);
+      xoff += 0.2;
+    }
+    yoff += 0.2;
+  }
+  background(0, 128, 255);
+  rotateX(PI / 3);
+  fill(50, 50, 50, 50);
+  translate(-w / 2, -h / 4);
+  for (let y = 0; y < rows - 1; y++) {
+    beginShape(TRIANGLE_STRIP);
+    for (let x = 0; x < cols; x++) {
+      let v = terrain[x][y];
+      fill(0, v+250, 0, v+200);
+      vertex(x * scl, y * scl, terrain[x][y]);
+      vertex(x * scl, (y + 1) * scl, terrain[x][y + 1]);
+    }
+    endShape();
+  }
+  
+  // 비행기
+  
+  push(); 
+  translate(w / 2, h / 2,100);
+  translate(mouseX - width / 2, (mouseY - height / 2) * 6);
+  rotateX(30);    
+  noStroke();
+  
+  fill(255);
+  ellipsoid(20, 20, 60);
+
+  // 왼쪽 날개 그리기
+  fill(0,0,255);
+  push();
+  translate(-30, 0, 0);
+  rotateY(60);
+  box(100, 5, 25);
+  pop();
+
+  // 오른쪽 날개 그리기
+  fill(0,0,255);
+  push();
+  translate(30, 0, 0);
+  rotateY(-60);
+  box(100, 5, 25);
+  pop();
+  
+  fill(0,0,255);
+  push();
+  translate(0, 0, 60);
+  box(80, 5, 20);
+  pop();
+  
+  fill(0,0,255);
+  push();
+  translate(0, -15, 60);
+  box(5, 30, 20);
+  pop();
+
+  pop();
+  
+  // 구름1만들기
+  
+  push();
+  noStroke();
+  translate(500,c++,80);
+  
+  c+=8;
+  fill(255,255,255,230);
+  ellipsoid(40, 30, 20);
+  
+   // 왼쪽
+  fill(255,255,255,230);
+  push();
+  translate(-30, 20, 0);
+  ellipsoid(40, 30, 20);
+  pop();
+
+  // 오른쪽
+  fill(255,255,255,230);
+  push();
+  translate(30, 20, 0);
+  ellipsoid(40, 30, 20);
+  pop();
+  rotateX(PI / 3);
+  if(c>1000) c=-1500;
+  pop();
+  
+  // 구름2만들기
+  
+  push();
+  noStroke();
+  translate(900,c++,180);
+  c+=8;
+  fill(255,255,255,230);
+  ellipsoid(40, 30, 20);
+  
+   // 왼쪽
+  fill(255,255,255,230);
+  push();
+  translate(-30, 20, 0);
+  ellipsoid(40, 30, 20);
+  pop();
+
+  // 오른쪽
+  fill(255,255,255,230);
+  push();
+  translate(30, 20, 0);
+  ellipsoid(40, 30, 20);
+  pop();
+  rotateX(PI / 3);
+  if(c>1000) c=-1500;
+  pop();
+  
+  // 태양
+  push();
+  translate(1800,-2000,-100);
+  noStroke();
+  fill(255,165,0);
+  ambientLight(250);
+  directionalLight(255, 255, 255, 0, 0, -1);
+  sphere(50);
+  pop();
+  
+}
